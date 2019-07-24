@@ -267,56 +267,6 @@ class Sender(nn.Module):
                     loss_2_3 = loss_2 + self.beta*loss_3  # This corresponds to the second and third loss term in VQ-VAE
                     losses_2_3[i] = loss_2_3
 
-            '''
-            if not self.rl:
-                if not self.vqvae:
-                    # That's the original baseline setting
-                    p = F.softmax(self.linear_out(h), dim=1)
-                    token, sentence_probability = self.calculate_token_gumbel_softmax(p, self.tau, sentence_probability, batch_size)
-                else:
-                    pre_quant = self.linear_out(h)
-
-                    if not self.discrete_communication:
-                        token = self.vq.apply(pre_quant, self.e, indices)
-                    else:
-                        distances = distance_computer(pre_quant)
-                        softmin = F.softmax(-distances, dim=1)
-                        if not self.gumbel_softmax:
-                            token = self.hard_max.apply(softmin, indices, self.discrete_latent_number)  # This also updates the indices
-                        else:
-                            _, indices[:] = torch.max(softmin, dim=1)
-                            token, _ = self.calculate_token_gumbel_softmax(softmin, self.tau, 0, batch_size)
-
-            else:
-                if not self.vqvae:
-                    all_logits = F.log_softmax(self.linear_out(h)/self.tau, dim=1)
-                else:
-                    pre_quant = self.linear_out(h)
-                    distances = distance_computer(pre_quant)
-                    all_logits = F.log_softmax(-distances/self.tau, dim=1)
-                    _, indices[:] = torch.max(all_logits, dim=1)
-
-                distr = Categorical(logits=all_logits)
-                entropy[:,i] = distr.entropy()
-
-                if self.training:
-                    token_index = distr.sample()
-                    token = to_one_hot(token_index, n_dims=self.vocab_size)
-                else:
-                    token_index = all_logits.argmax(dim=1)
-                    token = to_one_hot(token_index, n_dims=self.vocab_size)
-                message_logits[:, i] = distr.log_prob(token_index)
-
-            if not (self.vqvae and not self.discrete_communication and not self.rl):
-                # Whenever we have a meaningful eos symbol, we prune the messages in the end
-                self._calculate_seq_len(seq_lengths, token, initial_length, seq_pos=i + 1)
-
-            if self.vqvae:
-                loss_2 = torch.mean(torch.norm(pre_quant.detach() - self.e[indices], dim=1)**2)
-                loss_3 = torch.mean(torch.norm(pre_quant - self.e[indices].detach(), dim=1)**2)
-                loss_2_3 = loss_2 + self.beta*loss_3  # This corresponds to the second and third loss term in VQ-VAE
-                losses_2_3[i] = loss_2_3
-            '''
             token = token.to(self.device)
             output.append(token)
 
