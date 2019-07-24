@@ -10,13 +10,12 @@
 #SBATCH --mail-type=BEGIN,END
 #SBATCH --mail-user=leon.lang@student.uva.nl
 
-
 ### Now: No RL anymore ###
 # ultimate baseline:
 python3 -u baseline/train_game.py \
 	--seed 1 \
 	--iterations 500 \
-	--log-interval 20
+	--log-interval 20 \
 
 # from now on: no rl, but vqvae
 # continuous communication:
@@ -42,4 +41,3 @@ python3 -u baseline/train_game.py \
 	--vqvae \
 	--discrete_communication \
 	--gumbel_softmax
-

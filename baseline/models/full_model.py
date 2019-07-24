@@ -140,8 +140,8 @@ class FullModel(nn.Module):
             hinge_mean_loss += loss_2_3
 
         if self.rl:
-            effective_entropy=torch.zeros(batch_size)
-            effective_logit=torch.zeros(batch_size)
+            effective_entropy = torch.zeros(batch_size)
+            effective_logit = torch.zeros(batch_size)
             for i in range(self.output_len):
                 not_eosed = (i < lengths).float()
                 effective_entropy += entropy[:, i] * not_eosed
